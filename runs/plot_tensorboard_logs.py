@@ -2,7 +2,7 @@ import os
 import matplotlib.pyplot as plt
 from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
 
-LOG_DIR = "runs/transformer"  # 和训练时保持一致
+LOG_DIR = "transformer"  # 和训练时保持一致
 
 def extract_scalars(log_dir, tag):
     event_acc = EventAccumulator(log_dir)
