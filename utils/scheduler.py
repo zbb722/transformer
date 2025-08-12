@@ -1,10 +1,12 @@
 import torch
 
+
 class NoamOpt:
     """
     自定义学习率调度器，来自 "Attention is All You Need" 论文
     学习率公式：d_model^(-0.5) * min(step_num^(-0.5), step_num * warmup_steps^(-1.5))
     """
+
     def __init__(self, d_model, factor, warmup, optimizer):
         self.optimizer = optimizer
         self._step = 0
@@ -34,6 +36,6 @@ class NoamOpt:
         if step is None:
             step = self._step
         return self.factor * (
-            self.d_model ** (-0.5) *
-            min(step ** (-0.5), step * self.warmup ** (-1.5))
+                self.d_model ** (-0.5) *
+                min(step ** (-0.5), step * self.warmup ** (-1.5))
         )

@@ -35,17 +35,17 @@ def main():
     # 训练每 epoch loss
     steps, train_epoch_loss = extract_scalars(LOG_DIR, "Train/Epoch_Loss")
     if steps:
-        plot_and_save(steps, train_epoch_loss, "Epoch", "Loss", "Train Epoch Loss", "train_epoch_loss.png")
+        plot_and_save(steps, train_epoch_loss, "Epoch", "Loss", "Train Epoch Loss", "overfitting/train_epoch_loss.png")
 
     # 验证每 epoch loss
     steps, valid_epoch_loss = extract_scalars(LOG_DIR, "Valid/Epoch_Loss")
     if steps:
-        plot_and_save(steps, valid_epoch_loss, "Epoch", "Loss", "Valid Epoch Loss", "valid_epoch_loss.png")
+        plot_and_save(steps, valid_epoch_loss, "Epoch", "Loss", "Valid Epoch Loss", "overfitting/valid_epoch_loss.png")
 
     # 验证 BLEU
     steps, valid_bleu = extract_scalars(LOG_DIR, "Valid/BLEU")
     if steps:
-        plot_and_save(steps, valid_bleu, "Epoch", "BLEU Score", "Valid BLEU Score", "valid_bleu.png")
+        plot_and_save(steps, valid_bleu, "Epoch", "BLEU Score", "Valid BLEU Score", "overfitting/valid_bleu.png")
 
     # 训练批次 loss (通常会很多点，画图时可考虑只画部分或加点标记)
     steps, train_batch_loss = extract_scalars(LOG_DIR, "Train/Batch_Loss")

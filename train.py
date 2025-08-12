@@ -14,7 +14,7 @@ from tokenizer.dataset import get_dataloader
 # 注意：在本文件中实现了一个不执行 optimizer.step() 的 NoamLR，
 # 因此不依赖外部 utils.scheduler.NoamOpt 的 "封装 step" 行为
 from utils.loss import get_loss_function
-from utils.evaluate import evaluate_loss, calculate_bleu_batch
+from utils.evaluate import evaluate_loss, calculate_bleu
 import torch.nn.utils as nn_utils
 
 
@@ -164,7 +164,7 @@ def main():
     batch_size = 64
     max_len = 100
     vocab_size = 32000
-    num_epochs = 5
+    num_epochs = 50
     model_save_path = "model/en2de_model.pth"
     grad_clip = 1.0  # 可选：梯度裁剪，防止梯度爆炸（None 表示不裁剪）
 
@@ -178,12 +178,12 @@ def main():
 
     # 模型、优化器、损失函数、调度器
     model = Transformer(vocab_size=vocab_size).to(device)
-    optimizer = Adam(model.parameters(), weight_decay=1e-5, betas=(0.9, 0.98), eps=1e-9)
+    optimizer = Adam(model.parameters(), weight_decay=1e-4, betas=(0.9, 0.98), eps=1e-9)
 
     # 使用上面实现的 NoamLR（注意：这个 NoamLR 不会在 step() 执行 optimizer.step()）
     scheduler = NoamLR(optimizer, d_model=model.d_model, factor=1, warmup=4000)
 
-    criterion = get_loss_function(ignore_index=0)
+    criterion = get_loss_function(ignore_index=0, vocab_size=vocab_size)
 
     # TensorBoard 日志
     writer = SummaryWriter(log_dir="runs/transformer")
@@ -202,7 +202,7 @@ def main():
         valid_loss = evaluate_loss(model, valid_loader, criterion, device)
 
         # 验证 BLEU（beam search 会比较慢，max_len 调低加速）
-        bleu_score = calculate_bleu_batch(model, valid_loader, sp, device, beam_size=2, max_len=60)
+        bleu_score = calculate_bleu(model, valid_loader, sp, device, beam_size=1, max_len=60)
 
         end = time.time()
 
@@ -219,7 +219,9 @@ def main():
             best_bleu = bleu_score
             torch.save(model.state_dict(), model_save_path)
             print(f"New best model saved with BLEU: {bleu_score:.2f}")
-
+        if epoch == num_epochs - 1:
+            torch.save(model.state_dict(), "final_model.pth")
+            print(f"final model saved with BLEU: {bleu_score:.2f}")
     writer.close()
     print(f"训练结束。Best BLEU: {best_bleu:.2f}")
 

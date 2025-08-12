@@ -4,12 +4,14 @@ from datasets import load_dataset
 from pathlib import Path
 from tqdm import tqdm
 
+
 def save_to_file(pairs, src_path, tgt_path):
     with open(src_path, 'w', encoding='utf-8') as src_f, \
-         open(tgt_path, 'w', encoding='utf-8') as tgt_f:
+            open(tgt_path, 'w', encoding='utf-8') as tgt_f:
         for pair in tqdm(pairs):
             src_f.write(pair['translation']['en'].strip() + '\n')
             tgt_f.write(pair['translation']['de'].strip() + '\n')
+
 
 def download_wmt14(subset_size=100000):
     print("Downloading WMT14 En-De...")
@@ -33,5 +35,6 @@ def download_wmt14(subset_size=100000):
                  src_path=save_dir / "valid.en",
                  tgt_path=save_dir / "valid.de")
 
+
 if __name__ == "__main__":
-    download_wmt14(subset_size=100_000)  # 选前10万样本
+    download_wmt14(subset_size=500_000)  # 选前50万样本

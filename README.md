@@ -17,9 +17,9 @@
 <pre> ```transformer
 ├─data                          # 数据目录
 │  ├─bpe                        # BPE 分词后的训练/验证/测试集
-│  └─wmt14_raw                 # 原始 WMT14 英德数据集
+│  └─wmt14_raw                  # 原始 WMT14 英德数据集
 ├─model                         # 模型定义与保存路径
-│  ├─transformer_best.pth       # 训练过程中表现最好的模型权重
+│  ├─en2de_model.pth            # 训练过程中表现最好的模型权重
 │  └─transformer.py             # Transformer 模型结构定义
 ├─runs                          # 日志和可视化相关
 │  ├─transformer                # TensorBoard 日志目录

@@ -3,6 +3,7 @@ from torch.utils.data import Dataset, DataLoader
 import sentencepiece as spm
 from pathlib import Path
 
+
 class TranslationDataset(Dataset):
     def __init__(self, src_file, tgt_file, sp_model_path, max_len=100):
         self.sp = spm.SentencePieceProcessor()
@@ -25,12 +26,13 @@ class TranslationDataset(Dataset):
         bos_id = 2
         eos_id = 3
         src = src[:self.max_len]
-        tgt = tgt[:self.max_len-2]  # 留空间给 bos 和 eos
+        tgt = tgt[:self.max_len - 2]  # 留空间给 bos 和 eos
 
         src = torch.tensor(src, dtype=torch.long)
         tgt = torch.tensor([bos_id] + tgt + [eos_id], dtype=torch.long)
 
         return src, tgt
+
 
 def collate_fn(batch):
     src_batch, tgt_batch = zip(*batch)
@@ -43,17 +45,19 @@ def collate_fn(batch):
 
     return src_padded, tgt_padded, torch.tensor(src_lens), torch.tensor(tgt_lens)
 
+
 def get_dataloader(src_file, tgt_file, sp_model_path, batch_size=64, max_len=100, shuffle=True):
     dataset = TranslationDataset(src_file, tgt_file, sp_model_path, max_len)
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, collate_fn=collate_fn)
     return dataloader
+
 
 if __name__ == "__main__":
     sp_model = Path("../data/bpe/wmt14_bpe.model")
     src_file = Path("../data/bpe/train.bpe.en")
     tgt_file = Path("../data/bpe/train.bpe.de")
 
-    dataloader = get_dataloader(src_file, tgt_file, sp_model, batch_size=8)
+    dataloader = get_dataloader(src_file, tgt_file, sp_model, batch_size=64)
 
     for batch_idx, (src, tgt, src_lens, tgt_lens) in enumerate(dataloader):
         print(f"Batch {batch_idx}")
